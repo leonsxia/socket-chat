@@ -14,16 +14,26 @@ server.listen(8080, function() {
     console.log('listening on *:8080');
 });
 
-io.on('connection', function(socket) {
+io.on('connection', function(socket) { // listen on connection event for incoming sockets
     socket.on('login', function(nickname) {
         if (users.indexOf(nickname) > -1) {
             socket.emit('nickExisted');
         } else {
-            socket.userIndex = users.length;
+            socket.userIndex = users.length; // for disconnection broadcasting
             socket.nickname = nickname;
             users.push(nickname);
-            socket.emit('loginSuccess');
-            io.sockets.emit('system', nickname); //向所有连接到服务器的客户端发送当前登陆用户的昵称 
+            socket.emit('loginSuccess'); // emit current client
+            io.sockets.emit('system', nickname, users.length, 'login'); // emit all clients
         };
+    });
+
+    // listen on disconnect event for client disconnect
+    socket.on('disconnect', function() {
+        users.splice(socket.userIndex, 1);
+        socket.broadcast.emit('system', socket.nickname, users.length, 'logout');
+    });
+
+    socket.on('postMsg', function(msg) {
+        socket.broadcast.emit('newMsg', socket.nickname, msg);
     });
 });
