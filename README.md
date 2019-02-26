@@ -1,1 +1,1 @@
-HiChat using socket.io and node.js.
+HiChat using socket.io and node.js
