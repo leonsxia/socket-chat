@@ -1,10 +1,19 @@
-var server = require('./server');
-var router = require("./router");
-var requestHandlers = require("./requestHandlers");
+var server = require('./server'),
+    router = require('./router'),
+    requestHandlers = require('./requestHandlers'),
+    socketHandlers = require('./socketHandlers');
 
-var handle = {}
-handle["/"] = requestHandlers.start;
-handle["/start"] = requestHandlers.start;
-handle["/show"] = requestHandlers.show;
+var handle = {
+    '/': requestHandlers.start,
+    '/start': requestHandlers.start,
+    '/show': requestHandlers.show
+};
 
-server.start(router.route, handle);
+// var socket_handle = {
+//     'login': socketHandlers.login,
+//     'disconnect': socketHandlers.disconnect,
+//     'postMsg': socketHandlers.postMsg,
+//     'postImg': socketHandlers.postImg
+// };
+
+server.start(router.route, router.socket_route, handle, socketHandlers);
