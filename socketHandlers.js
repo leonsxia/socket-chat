@@ -39,31 +39,4 @@ SocketHandler.prototype = {
     }
 };
 
-function login(nickname) {
-    if (users.indexOf(nickname) > -1) {
-        socket.emit('nickExisted');
-    } else {
-        socket.userIndex = users.length; // for disconnection broadcasting
-        socket.nickname = nickname;
-        users.push(nickname);
-        socket.emit('loginSuccess'); // emit current client
-        io.emit('system', nickname, users.length, 'login'); // emit all clients
-    };
-};
-
-function disconnect() {
-    users.splice(socket.userIndex, 1);
-    socket.broadcast.emit('system', socket.nickname, users.length, 'logout'); // emit all clients except current client
-};
-
-function postMsg() {
-    users.splice(socket.userIndex, 1);
-    socket.broadcast.emit('system', socket.nickname, users.length, 'logout'); // emit all clients except current client
-}
-
-function postImg() {
-    users.splice(socket.userIndex, 1);
-    socket.broadcast.emit('system', socket.nickname, users.length, 'logout'); // emit all clients except current client
-}
-
 module.exports = SocketHandler;
