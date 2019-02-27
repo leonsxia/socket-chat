@@ -31,7 +31,7 @@ html, body {
 }
 .banner p {
     float: left;
-    display: inline-block;
+    /* display: inline-block; */
 }
 .controls {
     height: 100px;
@@ -45,7 +45,7 @@ html, body {
     padding: 2px;
 }
 #historyMsg img {
-    max-width: 99%;
+    max-width: 50%;
 }
 .timespan {
     color: #ddd;
