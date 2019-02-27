@@ -2,8 +2,7 @@ function LogHelper() {
     var logs = {
         server: '[Server]: ',
         router: '[Router]: ',
-        request_handler: '[RequestHandler]: ',
-        socket_handler: '[SocketHandler]: '
+        request_handler: '[RequestHandler]: '
     };
 
     this.tags = logs;
