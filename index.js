@@ -9,11 +9,4 @@ var handle = {
     '/show': requestHandlers.show
 };
 
-// var socket_handle = {
-//     'login': socketHandlers.login,
-//     'disconnect': socketHandlers.disconnect,
-//     'postMsg': socketHandlers.postMsg,
-//     'postImg': socketHandlers.postImg
-// };
-
 server.start(router.route, router.socket_route, handle, socketHandlers);

@@ -48,7 +48,7 @@ html, body {
     max-width: 50%;
 }
 .timespan {
-    color: #ddd;
+    color: #888;
 }
 .items {
     height: 30px;
@@ -78,6 +78,7 @@ html, body {
     height: 90px;
     max-height: 90px;
     float:left;
+    resize: none;
 }
 #sendBtn {
     width: 50px;
