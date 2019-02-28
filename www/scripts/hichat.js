@@ -127,7 +127,7 @@ HiChat.prototype = {
         $('#messageInput').on('keyup', function(e) {
             var $messageInput = $('#messageInput'),
                 msg = $messageInput.val(),
-                color = $('#colorStype').val();
+                color = $('#colorStyle').val();
             if (e.keyCode == 13 && msg.trim().length > 0) {
                 $messageInput.val('');
                 that.socket.emit('postMsg', msg, color);

@@ -39,8 +39,8 @@ var SocketHandler = function(io, users) {
     this.postImg = function(imgData) {
         var socket = this;
         var date = new Date().toTimeString().substr(0, 8).replace(/:/g, '_');
-        var des_file = __dirname + '\\www\\tmp\\tmp_' + date + '.jpg';
-        var src = '\\tmp\\tmp_' + date + '.jpg';
+        var des_file = __dirname + '/www/tmp/tmp_' + date + '.jpg';
+        var src = '../tmp/tmp_' + date + '.jpg';
         var base64Data = imgData.replace(/^data:image\/\w+;base64,/, '');
         var dataBuffer = Buffer.from(base64Data, 'base64');
         fs.writeFile(des_file, dataBuffer, function (err) {
