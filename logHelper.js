@@ -9,7 +9,7 @@ function LogHelper() {
 
     return {
         tags: logs
-    }
+    };
     // this.tags = logs;
 };
 
