@@ -2,22 +2,29 @@ var fs = require('fs'),
     logHelper = require('./logHelper'),
     lh = new logHelper();
 
-var SocketHandler = function(io, users) {
-    var self = this;
-    this.users = users;
-    this.io = io;
+function SocketHandler() {
+    var _self = this;
+    var _users = null;
+    var _io = null;
+
+    this.init = function(io, users) { 
+        _users = users;
+        _io = io;
+        this.users = users;
+        this.io = io
+    };
 
     this.login = function(nickname) {
         var socket = this;
-        if (users.indexOf(nickname) > -1) {
+        if (_users.indexOf(nickname) > -1) {
             socket.emit('nickExisted');
         } else {
-            socket.userIndex = users.length; // for disconnection broadcasting
+            socket.userIndex = _users.length; // for disconnection broadcasting
             socket.nickname = nickname;
             socket.haslogin = true;
-            users.push(nickname);
+            _users.push(nickname);
             socket.emit('loginSuccess'); // emit current client
-            io.emit('system', nickname, users.length, 'login'); // emit all clients
+            _io.emit('system', nickname, _users.length, 'login'); // emit all clients
             console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
         };
     };
@@ -25,8 +32,8 @@ var SocketHandler = function(io, users) {
     this.disconnect = function() {
         var socket = this;
         if (socket.haslogin) {
-            users.splice(socket.userIndex, 1);
-            socket.broadcast.emit('system', socket.nickname, users.length, 'logout'); // emit all clients except current client
+            _users.splice(socket.userIndex, 1);
+            socket.broadcast.emit('system', socket.nickname, _users.length, 'logout'); // emit all clients except current client
             console.log(lh.tags.socket_handler + 'Event "disconnect" called for user [' + socket.nickname + '] signing off.');
         }
     };
@@ -48,8 +55,25 @@ var SocketHandler = function(io, users) {
                 console.log( err );
             }
         });
-        io.emit('newImg', socket.nickname, src);
+        _io.emit('newImg', socket.nickname, src);
     };
+
+    this.socketHandlers = {
+        'login': this.login,
+        'disconnect': this.disconnect,
+        'postMsg': this.postMsg,
+        'postImg': this.postImg
+    } 
+
+    // public function
+    return {
+        init: this.init,
+        login: this.login,
+        disconnect: this.disconnect,
+        postMsg: this.postMsg,
+        postImg: this.postImg,
+        socketHandlers: this.socketHandlers    
+    };    
 };
 
 module.exports = SocketHandler;

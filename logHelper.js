@@ -1,4 +1,5 @@
 function LogHelper() {
+    // private members
     var logs = {
         server: '[Server]: ',
         router: '[Router]: ',
@@ -6,7 +7,10 @@ function LogHelper() {
         socket_handler: '[SocketHandler]: '
     };
 
-    this.tags = logs;
+    return {
+        tags: logs
+    }
+    // this.tags = logs;
 };
 
 module.exports = LogHelper;

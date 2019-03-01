@@ -1,12 +1,12 @@
 var server = require('./server'),
     router = require('./router'),
     requestHandlers = require('./requestHandlers'),
-    socketHandlers = require('./socketHandlers');
+    socketController = require('./socketController');
 
-var handle = {
+var httphandle = {
     '/': requestHandlers.start,
     '/start': requestHandlers.start,
     '/show': requestHandlers.show
 };
 
-server.start(router.route, router.socket_route, handle, socketHandlers);
+server.start(router.http_route, router.socket_route, httphandle, socketController);

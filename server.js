@@ -6,10 +6,10 @@ var express = require('express'),
     lh = new logHelper(),
     users = [];
 
-function start(route, socket_route, handle, socketHandlers) {
+function start(httpRoute, socketRoute, handle, socketController) {
 
-    route(app, express, handle);
-    socket_route(io, users, socketHandlers);
+    httpRoute(app, express, handle);
+    socketRoute(io, users, socketController);
 
     server.listen(8080, function() {
         console.log(lh.tags.server + 'Listening on *:8080');
