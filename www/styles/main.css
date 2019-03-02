@@ -43,9 +43,16 @@ html, body {
     background-color: #fff;
     overflow: auto;
     padding: 2px;
+    word-break: break-all;
 }
 #historyMsg img {
     max-width: 50%;
+}
+#historyMsg p {
+    width: 93%;
+    padding: 0 5px;
+    line-height: 25px;    
+    word-break: break-all;
 }
 .timespan {
     color: #888;

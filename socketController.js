@@ -5,7 +5,7 @@ var logHelper = require('./logHelper'),
 // inherits from SocketHandlers
 function SocketController() {
     this.prototype = socketHandlers;
-    var _father = new this.prototype();
+    var _father = this.prototype();
     return {
         init: function(io, users) {            
             _father.init(io, users);
