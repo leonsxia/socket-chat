@@ -4,7 +4,7 @@ html, body {
     /* font-family: sans-serif; */
 }
 
-html, input {
+html, input, textarea {
     font-family:
       "HelveticaNeue-Light",
       "Helvetica Neue Light",
@@ -94,6 +94,9 @@ html, input {
 .items {
     height: 30px;
 }
+.items .btn {
+    border-radius: 30px;
+}
 #colorStyle {
     width: 50px;
     border: none;
@@ -107,9 +110,12 @@ html, input {
 #sendImage {
     position: absolute;
     width: 52px;
-    left: 0;
+    top: 2px;
+    left: -2px;
+    height: 19px;
     opacity: 0;
     overflow: hidden;
+    -webkit-appearance: button;
 }
 /*end custom file input*/
 
@@ -120,11 +126,17 @@ html, input {
     max-height: 90px;
     float:left;
     resize: none;
+    border: none;
+    font-size: 14px;
 }
-#sendBtn {
+#sendBtn {    
+    position: relative;
+    bottom: 1px;
     width: 50px;
     height: 96px;
     float: right;
+    background-color: #fffffe;
+    -webkit-appearance: button;
 }
 #emojiWrapper {
     display: none;

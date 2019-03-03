@@ -6,6 +6,7 @@ $(function() {
 var HiChat = function() {
     this.typing = false;
     this.socket = null;
+    this.isReconected = false;
 };
 
 HiChat.prototype = {
@@ -71,31 +72,6 @@ HiChat.prototype = {
             };            
         });
 
-        this.socket.on('nickExisted', function() {
-            $('#info').text('nickname is taken, choose another pls');
-        });
-
-        this.socket.on('loginSuccess', function() {
-            $('title').text('hichat | ' + $('#nicknameInput').val());
-            $('#loginWrapper').css({'display': 'none'});
-            $('#messageInput').focus();
-        });
-
-        this.socket.on('system', function(nickname, userCount, type) {
-            var msg = nickname + (type == 'login' ? ' joined' : ' left');
-            // $('#historyMsg').append('<p>' + msg + '</p>');
-            that._displayNewMsg('system', msg, 'red');            
-            $('#status').text(userCount + (userCount > 1 ? ' users' : ' user') + ' online');
-        });
-
-        this.socket.on('newMsg', function(user, msg, color) {
-            that._displayNewMsg(user, msg, color);
-        });
-
-        this.socket.on('newImg', function(user, src) {
-            that._displayImage(user, src);
-        });
-
         this._initalEmoji();
 
         $('#emoji').on('click', function(e) {
@@ -122,10 +98,12 @@ HiChat.prototype = {
 
         $('#nicknameInput').on('keyup', function(e) {
             if (e.keyCode == 13) {
-                var nickname = $('#nicknameInput').val();
-                if (nickname.trim().length != 0) {                
-                    that.socket.emit('login', nickname); // emit 'login' event to server
+                var nickname = $('#nicknameInput').val(),
+                    reg = /^[\u4E00-\u9FA5a-zA-Z0-9_-]{4,16}$/;
+                if (reg.test(nickname)) {                
+                    that.socket.emit('login', nickname, false); // emit 'login' event to server
                 } else {
+                    alert('nickname must be 4-16 charactor, including a-z/A-Z/中文/0-9/_/-');
                     $('#nicknameInput').focus();
                 };
             }
@@ -140,6 +118,44 @@ HiChat.prototype = {
                 that.socket.emit('postMsg', msg, color);
                 that._displayNewMsg('me', msg, color);
             }
+        });
+
+        window.onbeforeunload = () => {
+        };
+
+        this.socket.on('disconnect', () => {
+            // that._displayNewMsg('system', 'you have been disconnected', 'red');
+        });
+        
+        this.socket.on('reconnect', () => {
+            // that._displayNewMsg('system', 'you have been reconnected', 'red');
+            var nickname = $('#nicknameInput').val();
+            that.socket.emit('login', nickname, true);
+        });
+
+        this.socket.on('nickExisted', function() {
+            $('#info').text('nickname is taken, choose another pls');
+        });
+
+        this.socket.on('loginSuccess', function() {
+            $('title').text('hichat | ' + $('#nicknameInput').val());
+            $('#loginWrapper').fadeOut(300);
+            $('#messageInput').focus();
+        });
+
+        this.socket.on('system', function(nickname, userCount, type) {
+            var msg = nickname + (type == 'login' ? ' joined' : ' left');
+            // $('#historyMsg').append('<p>' + msg + '</p>');
+            that._displayNewMsg('system', msg, 'red');            
+            $('#status').text(userCount + (userCount > 1 ? ' users' : ' user') + ' online');
+        });
+
+        this.socket.on('newMsg', function(user, msg, color) {
+            that._displayNewMsg(user, msg, color);
+        });
+
+        this.socket.on('newImg', function(user, src) {
+            that._displayImage(user, src);
         });
     },
 

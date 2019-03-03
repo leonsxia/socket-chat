@@ -11,10 +11,10 @@ function SocketHandler() {
         _users = users;
         _io = io;
         // this.users = users;
-        this.io = io
+        this.io = io;
     };
 
-    this.login = function(nickname) {
+    this.login = function(nickname, isReconnect) {
         var socket = this;
         if (_users.indexOf(nickname) > -1) {
             socket.emit('nickExisted');
@@ -24,7 +24,9 @@ function SocketHandler() {
             socket.haslogin = true;
             _users.push(nickname);
             socket.emit('loginSuccess'); // emit current client
-            _io.emit('system', nickname, _users.length, 'login'); // emit all clients
+            if (!isReconnect) {
+                _io.emit('system', nickname, _users.length, 'login'); // emit all clients
+            }
             console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
         };
     };
@@ -32,8 +34,9 @@ function SocketHandler() {
     this.disconnect = function() {
         var socket = this;
         if (socket.haslogin) {
+            // socket.haslogin = false;
             _users.splice(socket.userIndex, 1);
-            socket.broadcast.emit('system', socket.nickname, _users.length, 'logout'); // emit all clients except current client
+            _io.emit('system', socket.nickname, _users.length, 'logout'); // emit all clients except current client
             console.log(lh.tags.socket_handler + 'Event "disconnect" called for user [' + socket.nickname + '] signing off.');
         }
     };
