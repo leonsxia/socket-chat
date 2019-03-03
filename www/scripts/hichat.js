@@ -1,9 +1,10 @@
-$(function() {
+$(function() { 
     var hichat = new HiChat();
     hichat.init();
 })
 
 var HiChat = function() {
+    this.typing = false;
     this.socket = null;
 };
 
@@ -13,19 +14,23 @@ HiChat.prototype = {
         // this.socket = io.connect();
         this.socket = io();
         this.socket.on('connect', function() {
-            $('#info').text('get yourself a nickname :)');
+            $('#info').text('Get yourself a nickname :)');
             $('#nickWrapper').css({'display': 'block'});
-            $('#nicknameInput').focus();
+            $('#nicknameInput').focus();            
         });
 
-        $('#loginBtn').on('click', function() {
-            var nickname = $('#nicknameInput').val();
-            if (nickname.trim().length != 0) {                
-                that.socket.emit('login', nickname); // emit 'login' event to server
-            } else {
-                $('#nicknameInput').focus();
-            };
+        $('#loginWrapper').on('click', function() {
+            $('#nicknameInput').focus();  
         });
+
+        // $('#loginBtn').on('click', function() {
+        //     var nickname = $('#nicknameInput').val();
+        //     if (nickname.trim().length != 0) {                
+        //         that.socket.emit('login', nickname); // emit 'login' event to server
+        //     } else {
+        //         $('#nicknameInput').focus();
+        //     };
+        // });
 
         $('#sendBtn').on('click', function() {
             var $messageInput = $('#messageInput'),
@@ -120,7 +125,9 @@ HiChat.prototype = {
                 var nickname = $('#nicknameInput').val();
                 if (nickname.trim().length != 0) {                
                     that.socket.emit('login', nickname); // emit 'login' event to server
-                }
+                } else {
+                    $('#nicknameInput').focus();
+                };
             }
         });
 

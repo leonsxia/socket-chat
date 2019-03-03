@@ -1,8 +1,20 @@
 html, body {
     margin: 0;
     background-color: #efefef;
-    font-family: sans-serif;
+    /* font-family: sans-serif; */
 }
+
+html, input {
+    font-family:
+      "HelveticaNeue-Light",
+      "Helvetica Neue Light",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      "Lucida Grande",
+      sans-serif;
+}
+
 .wrapper {
     width: 500px;
     height: 640px;
@@ -10,18 +22,40 @@ html, body {
     margin: 0 auto;
     background-color: #ddd;
 }
+
 #loginWrapper {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(5, 5, 5, .6);
+    background-color: rgba(0, 0, 0, .9);
     text-align: center;
     color: #fff;
     display: block;
     padding-top: 200px;
+    font-weight: 100;
 }
+
+#loginWrapper #info {
+    
+    font-size: 167%;
+}
+
+#loginWrapper #nicknameInput {
+    background-color: transparent;
+    border: none;
+    border-bottom: 5px solid #fff;
+    outline: none;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 338px;
+    color: #fff;
+    /* font-weight: 100; */
+    font-size: 190%;
+    letter-spacing: 1px;
+}
+
 #nickWrapper {
     display: none;
 }

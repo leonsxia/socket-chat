@@ -10,7 +10,7 @@ function SocketHandler() {
     this.init = function(io, users) { 
         _users = users;
         _io = io;
-        this.users = users;
+        // this.users = users;
         this.io = io
     };
 
