@@ -45,7 +45,7 @@ html, input, textarea {
 #loginWrapper #nicknameInput {
     background-color: transparent;
     border: none;
-    border-bottom: 5px solid #fff;
+    border-bottom: 2px solid #fff;
     outline: none;
     padding-bottom: 10px;
     text-align: center;
@@ -96,11 +96,15 @@ html, input, textarea {
 }
 .items .btn {
     border-radius: 30px;
+    border: none;
+    background-color: #fff;
 }
 #colorStyle {
+    position: relative;
     width: 50px;
     border: none;
     padding: 0;
+    top: 2px;
 }
 /*custom the file input*/
 
@@ -131,11 +135,12 @@ html, input, textarea {
 }
 #sendBtn {    
     position: relative;
-    bottom: 1px;
+    top: 1px;
     width: 50px;
-    height: 96px;
+    height: 90px;
     float: right;
     background-color: #fffffe;
+    border: none;
     -webkit-appearance: button;
 }
 #emojiWrapper {
@@ -160,4 +165,21 @@ html, input, textarea {
 }
 footer {
     text-align: center;
+}
+
+.historyArea::-webkit-scrollbar {/*scrollbar overall style*/
+    width: 10px;
+    height: 1px;
+}
+.historyArea::-webkit-scrollbar-thumb {/*bar*/
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #535353;
+}
+.historyArea::-webkit-scrollbar-track {/*rail*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background: #EDEDED;
 }

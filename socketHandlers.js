@@ -14,18 +14,18 @@ function SocketHandler() {
         this.io = io;
     };
 
-    this.login = function(nickname, isReconnect) {
+    this.login = function(data) {
         var socket = this;
-        if (_users.indexOf(nickname) > -1) {
+        if (_users.indexOf(data.nickname) > -1) {
             socket.emit('nickExisted');
         } else {
-            socket.userIndex = _users.length; // for disconnection broadcasting
-            socket.nickname = nickname;
+            // socket.userIndex = _users.length; // for disconnection broadcasting
+            socket.nickname = data.nickname;
             socket.haslogin = true;
-            _users.push(nickname);
+            _users.push(data.nickname);
             socket.emit('loginSuccess'); // emit current client
-            if (!isReconnect) {
-                _io.emit('system', nickname, _users.length, 'login'); // emit all clients
+            if (!data.isReconnected) {
+                _io.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients
             }
             console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
         };
@@ -35,37 +35,55 @@ function SocketHandler() {
         var socket = this;
         if (socket.haslogin) {
             // socket.haslogin = false;
-            _users.splice(socket.userIndex, 1);
-            _io.emit('system', socket.nickname, _users.length, 'logout'); // emit all clients except current client
+            var userIndex = -1;
+            for (i = 0; i < _users.length; i++) {
+                if (_users[i] === socket.nickname) {
+                    userIndex = i;
+                }
+            }
+            _users.splice(userIndex, 1);
+            _io.emit('system', { nickname: socket.nickname, userCount: _users.length, status: 'logout' }); // emit all clients except current client
             console.log(lh.tags.socket_handler + 'Event "disconnect" called for user [' + socket.nickname + '] signing off.');
         }
     };
 
-    this.postMsg =  function(msg, color) {
+    this.postMsg =  function(data) {
         var socket = this;
-        socket.broadcast.emit('newMsg', socket.nickname, msg, color); // emit all clients except current client
+        socket.broadcast.emit('newMsg', { nickname: socket.nickname, message: data.message, color: data.color }); // emit all clients except current client
     };
 
-    this.postImg = function(imgData) {
+    this.postImg = function(data) {
         var socket = this;
         var date = new Date().toTimeString().substr(0, 8).replace(/:/g, '_');
         var des_file = __dirname + '/www/tmp/tmp_' + date + '.jpg';
         var src = '../tmp/tmp_' + date + '.jpg';
-        var base64Data = imgData.replace(/^data:image\/\w+;base64,/, '');
+        var base64Data = data.stream.replace(/^data:image\/\w+;base64,/, '');
         var dataBuffer = Buffer.from(base64Data, 'base64');
         fs.writeFile(des_file, dataBuffer, function (err) {
             if( err ) {
                 console.log( err );
             }
         });
-        _io.emit('newImg', socket.nickname, src);
+        _io.emit('newImg', { nickname: socket.nickname, src: src, color: data.color });
+    };
+
+    this.typing = function(data) {
+        var socket = this;
+        socket.broadcast.emit('typing', { nickname: socket.nickname, color: data.color });
+    };
+
+    this.stopTyping = function() {
+        var socket = this;
+        socket.broadcast.emit('stopTyping', { nickname: socket.nickname });
     };
 
     this.socketHandlers = {
         'login': this.login,
         'disconnect': this.disconnect,
         'postMsg': this.postMsg,
-        'postImg': this.postImg
+        'postImg': this.postImg,
+        'typing': this.typing,
+        'stopTyping': this.stopTyping
     } 
 
     // public function
