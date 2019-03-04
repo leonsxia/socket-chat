@@ -23,18 +23,23 @@ function SocketHandler() {
             socket.nickname = data.nickname;
             socket.haslogin = true;
             _users.push(data.nickname);
-            socket.emit('loginSuccess'); // emit current client
+            socket.emit('loginSuccess', { userCount: _users.length }); // emit current client
             if (!data.isReconnected) {
-                _io.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients
+                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients
+                console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
             }
-            console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
+            else {
+                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'relogin' }); // emit all clients
+                _io.emit('loginAgain', { userCount: _users.length });
+                console.log(lh.tags.socket_handler + 'Event "relogin" called for user [' + socket.nickname + '] resigning in.');
+            }
         };
     };
 
     this.disconnect = function() {
         var socket = this;
         if (socket.haslogin) {
-            // socket.haslogin = false;
+            socket.haslogin = false;
             var userIndex = -1;
             for (i = 0; i < _users.length; i++) {
                 if (_users[i] === socket.nickname) {

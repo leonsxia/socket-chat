@@ -21,30 +21,31 @@
         <div class="wrapper">
             <div class="banner">
                 <h1>HiChat :)</h1>
-                <span id="status"></span>
+                <span class="status"></span>
             </div>
-            <div id="historyMsg" class='historyArea'>
+            <div class='historyArea'>
             </div>
             <div class="controls" >
                 <div class="items">
-                    <input id="colorStyle" type="color" placeHolder='#000' title="font color" />
-                    <input id="emoji" class="btn" type="button" value="emoji" title="emoji" />
+                    <input class="colorStyle" type="color" placeHolder='#000' title="font color" />
+                    <input class="emoji btn" type="button" value="emoji" title="emoji" />
                     <label for="sendImage" class="imageLable">
                         <input type="button" class="btn" value="image"  />
-                        <input id="sendImage" class="btn" type="file" value="image"/>
+                        <input class="sendImage btn" type="file" value="image"/>
                     </label>
-                    <input id="clearBtn" class="btn" type="button" value="clear" title="clear screen" />
+                    <input class="clearBtn btn" type="button" value="clear" title="clear screen" />
+                    <input class="hideLog btn" type="button" value="hide log" title="hide log" />
                 </div>
-                <textarea id="messageInput" placeHolder="enter to send"></textarea>
-                <input id="sendBtn" type='button' value='SEND' />
-                <div id="emojiWrapper">
+                <textarea class="messageInput" placeHolder="enter to send"></textarea>
+                <input class="sendBtn" type='button' value='SEND' />
+                <div class="emojiWrapper">
                 </div>
             </div>
         </div>
-        <div id="loginWrapper">
-            <p id="info">connecting to server...</p>
-            <div id="nickWrapper">
-                <input type="text" id="nicknameInput" />
+        <div class="loginWrapper">
+            <p class="info">connecting to server...</p>
+            <div class="nickWrapper">
+                <input type="text" class="nicknameInput" />
                 <!-- <input type="button" value="OK" id="loginBtn" /> -->
             </div>
         </div>
