@@ -125,7 +125,7 @@ html, body, input, textarea {
     position: relative;
 }
 
-.sendImage {
+.sendImg {
     position: absolute;
     width: 52px;
     top: 2px;

@@ -45,7 +45,7 @@ SocketChat.prototype = {
             }
         });
 
-        $('.sendImage').on('change', function() {
+        $('.sendImg').on('change', function() {
             var $this = $(this);
             if (this.files.length != 0) {
                 var file = this.files[0],
