@@ -6,7 +6,7 @@ $(function() {
 var SocketChat = function() {
     this.socket = null;
     this.lastTypingTime;
-    this.FADE_TIME = 400; // ms
+    this.FADE_TIME = 150; // ms
     this.TYPING_TIMER_LENGTH = 400; // ms
     this.FLAGS = {
         typing: false,
@@ -118,7 +118,7 @@ SocketChat.prototype = {
         $('.nicknameInput').on('keyup', function(e) {
             var $this = $(this);
             if (e.keyCode == 13) {  // enter key
-                reg = /^[\u4E00-\u9FA5a-zA-Z0-9_-]{2,16}$/;
+                reg = /^[\u4E00-\u9FA5a-zA-Z0-9_-\s]{2,16}$/;
                 that._initUserConfig();   // get nickname from input once, stored in local var
                 if (reg.test(that.USER_CONFIG.nickname)) {                
                     that.socket.emit('login', { nickname: that.USER_CONFIG.nickname, isReconnected: false }); // emit 'login' event to server
@@ -130,16 +130,28 @@ SocketChat.prototype = {
         });
 
         $('.messageInput').on('keyup', function(e) {
-            var $messageInput = $('.messageInput'),
-                msg = $messageInput.val();
-            if (e.keyCode == 13 && msg.trim().length > 0 && that.FLAGS.connected) {
-                $messageInput.val('');
+            var $this = $(this),
+                msg = $this.val();
+             // Auto-focus the current input when a key is typed
+            if (e.altKey) {
+                $this.val(msg + '<br/>' );
+            } else if (e.keyCode == 13 && msg.trim().length > 0 && that.FLAGS.connected) {
+                $this.val('');
                 that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color });
                 that._addChatMessage({ nickname: 'me', message: msg, color: that.USER_CONFIG.color });
+                that.socket.emit('stopTyping');
+                that.FLAGS.typing = false;
+            } else {
+                this.focus();
             }
         });
 
-        $('.messageInput').on('input', function() {
+        $('.messageInput').on('input', function(e) {
+            // var $messageInput = $('.messageInput'),
+            //     msg = $messageInput.val();
+            // if (e.keyCode == 13 && msg.trim().length > 0) {
+            //     return;
+            // }
             that._updateTyping();
         });
 
@@ -256,6 +268,9 @@ SocketChat.prototype = {
     _addImg: function(data) {
         var date = new Date().toTimeString().substr(0, 8),
             $msgToDisplay = $('<p/>');
+        if (data.nickname === this.USER_CONFIG.nickname) {
+            data.nickname = 'me';
+        }
         $msgToDisplay.addClass('img')
         .append('<b>[' + data.nickname + ']</b> ' + '<span class="timespan">(' + date + '): </span> </br>' + 
         '<a href="/show?src=' + data.src + '" target="_blank"><img src="' + data.src + '"/></a>')

@@ -4,8 +4,7 @@ var logHelper = require('./logHelper'),
 
 // inherits from SocketHandlers
 function SocketController() {
-    this.prototype = socketHandlers;
-    var _father = this.prototype();
+    var _father = new socketHandlers();
     return {
         init: function(io, users) {            
             _father.init(io, users);
@@ -22,6 +21,10 @@ function SocketController() {
             });
         }
     };
+};
+
+SocketController.prototype = {
+    
 };
 
 module.exports = SocketController;

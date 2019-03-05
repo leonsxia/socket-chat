@@ -94,11 +94,7 @@ function SocketHandler() {
     // public function
     return {
         init: this.init,
-        login: this.login,
-        disconnect: this.disconnect,
-        postMsg: this.postMsg,
-        postImg: this.postImg,
-        socketHandlers: this.socketHandlers    
+        socketHandlers: this.socketHandlers   
     };    
 };
 
