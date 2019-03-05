@@ -94,6 +94,10 @@ html, body, input, textarea {
     font-size: 11px;
 }
 
+.historyArea .log.hide {
+    display: none;
+}
+
 .timespan {
     color: #888;
 }

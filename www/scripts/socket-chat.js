@@ -5,14 +5,19 @@ $(function() {
 
 var SocketChat = function() {
     this.socket = null;
-    this.typing = false;
-    this.nickname = null;
-    this.connected = false;
-    this.firstLogin = true;
-    this.color = '#000';
     this.lastTypingTime;
-    this.FADE_TIME = 250; // ms
+    this.FADE_TIME = 400; // ms
     this.TYPING_TIMER_LENGTH = 400; // ms
+    this.FLAGS = {
+        typing: false,
+        connected: false,
+        firstLogin: true,
+        hideLog: false
+    };
+    this.USER_CONFIG = {
+        nickname: null,
+        color: '#000'
+    };
 };
 
 SocketChat.prototype = {
@@ -35,8 +40,8 @@ SocketChat.prototype = {
                 msg = $messageInput.val();
             $messageInput.val('').focus();
             if (msg.trim().length > 0) {
-                that.socket.emit('postMsg', { message: msg, color: that.color }); // emit 'postMsg' event to server
-                that._addChatMessage({nickname: 'me', message: msg, color: that.color});
+                that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color }); // emit 'postMsg' event to server
+                that._addChatMessage({nickname: 'me', message: msg, color: that.USER_CONFIG.color});
             }
         });
 
@@ -61,7 +66,7 @@ SocketChat.prototype = {
 
                 reader.onload = function(e) {
                     $this.val('');
-                    that.socket.emit('postImg', { stream: e.target.result, color: that.color });
+                    that.socket.emit('postImg', { stream: e.target.result, color: that.USER_CONFIG.color });
                 };
                 reader.readAsDataURL(file);
             };            
@@ -71,7 +76,7 @@ SocketChat.prototype = {
 
         // get color
         $('.colorStyle').on('change', function () {
-            that.color = $(this).val();
+            that.USER_CONFIG.color = $(this).val();
         });
 
         $('.emoji').on('click', function(e) {
@@ -99,11 +104,13 @@ SocketChat.prototype = {
         $('.hideLog').on('click', function() {
             var $this = $(this);
             if ($this.attr('title') === 'hide log') {
-                $('.historyArea > p.log').fadeOut(that.FADE_TIME);
+                $('.historyArea > p.log').fadeOut(that.FADE_TIME).addClass('hide');
                 $this.val('show log').attr('title', 'show log');
+                that.FLAGS.hideLog = true;
             } else {
                 $('.historyArea > p.log').fadeIn(that.FADE_TIME);
-                $this.val('hide log').attr('title', 'hide log');
+                $this.val('hide log').attr('title', 'hide log').removeClass('hide');
+                that.FLAGS.hideLog = false;
             }
             
         });
@@ -112,9 +119,9 @@ SocketChat.prototype = {
             var $this = $(this);
             if (e.keyCode == 13) {  // enter key
                 reg = /^[\u4E00-\u9FA5a-zA-Z0-9_-]{2,16}$/;
-                that._initData();   // get nickname from input once, stored in local var
-                if (reg.test(that.nickname)) {                
-                    that.socket.emit('login', { nickname: that.nickname, isReconnected: false }); // emit 'login' event to server
+                that._initUserConfig();   // get nickname from input once, stored in local var
+                if (reg.test(that.USER_CONFIG.nickname)) {                
+                    that.socket.emit('login', { nickname: that.USER_CONFIG.nickname, isReconnected: false }); // emit 'login' event to server
                 } else {
                     $('.info').text('nickname must be 2-16 charactor, including a-z/A-Z/中文/0-9/_/-');
                     $this.focus();
@@ -125,10 +132,10 @@ SocketChat.prototype = {
         $('.messageInput').on('keyup', function(e) {
             var $messageInput = $('.messageInput'),
                 msg = $messageInput.val();
-            if (e.keyCode == 13 && msg.trim().length > 0 && that.connected) {
+            if (e.keyCode == 13 && msg.trim().length > 0 && that.FLAGS.connected) {
                 $messageInput.val('');
-                that.socket.emit('postMsg', { message: msg, color: that.color });
-                that._addChatMessage({ nickname: 'me', message: msg, color: that.color });
+                that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color });
+                that._addChatMessage({ nickname: 'me', message: msg, color: that.USER_CONFIG.color });
             }
         });
 
@@ -137,15 +144,15 @@ SocketChat.prototype = {
         });
 
         this.socket.on('disconnect', function() {
-            that.connected = false;
+            that.FLAGS.connected = false;
             that._log({ nickname: 'system', message: 'you have been disconnected', color: '#888' });
         });
         
         this.socket.on('reconnect', function() {
-            that._initData();
-            that.connected = true;
+            that._initUserConfig();
+            that.FLAGS.connected = true;
             that._log({ nickname: 'system', message: 'you have been reconnected', color: '#888' });
-            that.socket.emit('login', { nickname: that.nickname, isReconnected: true });
+            that.socket.emit('login', { nickname: that.USER_CONFIG.nickname, isReconnected: true });
         });
 
         this.socket.on('nickExisted', function() {
@@ -153,14 +160,14 @@ SocketChat.prototype = {
         });
 
         this.socket.on('loginSuccess', function(data) {
-            that.connected = true;
-            $('title').text('socket-chat | ' + that.nickname);
+            that.FLAGS.connected = true;
+            $('title').text('socket-chat | ' + that.USER_CONFIG.nickname);
             $('.loginWrapper').fadeOut(300);
-            if (that.firstLogin) {
+            if (that.FLAGS.firstLogin) {
                 $('.historyArea > p').remove();
-                that._log({ nickname: 'system', message: 'Welcome ' + that.nickname, color: '#888' });
+                that._log({ nickname: 'system', message: 'Welcome ' + that.USER_CONFIG.nickname, color: '#888' });
                 that._updateBanner(data);
-                that.firstLogin = false;
+                that.FLAGS.firstLogin = false;
             }
             $('.messageInput').focus();
         });
@@ -206,7 +213,8 @@ SocketChat.prototype = {
         if (options.fade) {
             $el.hide().fadeIn(this.FADE_TIME);
         }
-        $container.append($el).scrollTop($container[0].scrollHeight);
+
+        $container.append($el).scrollTop($container[0].scrollHeight);   
     },
 
     _log: function(data) {
@@ -214,6 +222,9 @@ SocketChat.prototype = {
             $msgToDisplay = $('<p/>').addClass('log')
             .append('-[' + data.nickname + '] ' + '<span class="timespan">(' + date + '): </span>' + data.message + '-')
             .css('color', data.color);
+            if (this.FLAGS.hideLog) {
+                $msgToDisplay.addClass('hide');
+            }
         this._addMessageElement($msgToDisplay);
     },
 
@@ -244,7 +255,7 @@ SocketChat.prototype = {
 
     _addImg: function(data) {
         var date = new Date().toTimeString().substr(0, 8),
-        $msgToDisplay = $('<p/>');
+            $msgToDisplay = $('<p/>');
         $msgToDisplay.addClass('img')
         .append('<b>[' + data.nickname + ']</b> ' + '<span class="timespan">(' + date + '): </span> </br>' + 
         '<a href="/show?src=' + data.src + '" target="_blank"><img src="' + data.src + '"/></a>')
@@ -272,19 +283,19 @@ SocketChat.prototype = {
 
     _updateTyping: function() {
         var that = this;
-        if (this.connected) {
-            if (!this.typing) {
-                this.typing = true;
-                this.socket.emit('typing', { color: this.color });
+        if (this.FLAGS.connected) {
+            if (!this.FLAGS.typing) {
+                this.FLAGS.typing = true;
+                this.socket.emit('typing', { color: this.USER_CONFIG.color });
             }
             this.lastTypingTime = (new Date()).getTime();
 
             setTimeout(function() {
                 var typingTimer = (new Date()).getTime();
                 var timeDiff = typingTimer - that.lastTypingTime;
-                if (timeDiff >= that.TYPING_TIMER_LENGTH && that.typing) {
+                if (timeDiff >= that.TYPING_TIMER_LENGTH && that.FLAGS.typing) {
                     that.socket.emit('stopTyping');
-                    that.typing = false;
+                    that.FLAGS.typing = false;
                 } 
             }, this.TYPING_TIMER_LENGTH);
         }
@@ -321,8 +332,8 @@ SocketChat.prototype = {
         $('.status').text(data.userCount + (data.userCount > 1 ? ' users' : ' user') + ' online');
     },
 
-    _initData: function() {
-        this.nickname = $('.nicknameInput').val();
-        this.color = $('.colorStyle').val();
+    _initUserConfig: function() {
+        this.USER_CONFIG.nickname = $('.nicknameInput').val();
+        this.USER_CONFIG.color = $('.colorStyle').val();
     }
 };
