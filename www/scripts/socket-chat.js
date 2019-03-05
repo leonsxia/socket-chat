@@ -1,9 +1,9 @@
 $(function() { 
-    var hichat = new HiChat();
-    hichat.init();
+    var socketchat = new SocketChat();
+    socketchat.init();
 })
 
-var HiChat = function() {
+var SocketChat = function() {
     this.socket = null;
     this.typing = false;
     this.nickname = null;
@@ -15,7 +15,7 @@ var HiChat = function() {
     this.TYPING_TIMER_LENGTH = 400; // ms
 };
 
-HiChat.prototype = {
+SocketChat.prototype = {
     init: function() {
         var that = this;
         // this.socket = io.connect();
@@ -154,7 +154,7 @@ HiChat.prototype = {
 
         this.socket.on('loginSuccess', function(data) {
             that.connected = true;
-            $('title').text('hichat | ' + that.nickname);
+            $('title').text('socket-chat | ' + that.nickname);
             $('.loginWrapper').fadeOut(300);
             if (that.firstLogin) {
                 $('.historyArea > p').remove();
