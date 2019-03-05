@@ -1,1 +1,1 @@
-HiChat using Socket.IO and Node.js and express()
+Realtime chat app using Socket.IO and Node.js and Express
