@@ -114,6 +114,14 @@ html, body, input, textarea {
     margin-bottom: 27px;
 }
 
+.historyArea li.message {
+    margin-bottom: 13px;
+}
+
+.historyArea li.image {
+    margin-bottom: 27px;
+}
+
 .historyArea li.leftbox .left {
     float: left;
 }
@@ -124,9 +132,8 @@ html, body, input, textarea {
 
 .historyArea li.leftbox p.left {
     background-color: #fff;
-    position: relative;
     top: 25px;
-    left: -122px;
+    max-width: 60%;
 }
 
 .historyArea li.rightbox {
@@ -146,6 +153,7 @@ html, body, input, textarea {
     position: relative;
     top: 25px;    
     right: -56px;
+    max-width: 60%;
 }
 
 .msgBox {
