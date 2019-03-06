@@ -15,7 +15,7 @@ html, body, input, textarea {
     height: 670px;
     padding: 5px;
     margin: 0 auto;
-    background-color: #ddd;
+    background-color: #eee;
     height: 670px;
 }
 
@@ -58,6 +58,7 @@ html, body, input, textarea {
 .banner {
     height: 90px;
     width: 100%;
+    border-bottom: solid 1px #ddd;
 }
 
 .banner p {
@@ -72,7 +73,6 @@ html, body, input, textarea {
 
 .historyArea {
     height: 400px;
-    background-color: #fff;
     overflow: auto;
     padding: 2px;
     word-break: break-all;
@@ -105,6 +105,10 @@ html, body, input, textarea {
 
 .historyArea li.leftbox {
     float: left;
+}
+
+.historyArea li.leftbox p.left {
+    background-color: #fff;
 }
 
 .historyArea li.rightbox {
