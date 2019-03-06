@@ -12,11 +12,10 @@ html, body, input, textarea {
 
 .wrapper {
     width: 500px;
-    height: 670px;
+    height: 676px;
     padding: 5px;
     margin: 0 auto;
     background-color: #eee;
-    height: 670px;
 }
 
 .loginWrapper {
@@ -236,7 +235,7 @@ html, body, input, textarea {
 .messageInput {
     width: 440px;
     max-width: 440px;
-    height: 90px;
+    height: 87px;
     max-height: 90px;
     float:left;
     resize: none;
@@ -246,9 +245,9 @@ html, body, input, textarea {
 
 .sendBtn {    
     position: relative;
-    top: 1px;
+    top: 0px;
     width: 50px;
-    height: 90px;
+    height: 91px;
     float: right;
     background-color: #fffffe;
     border: none;
