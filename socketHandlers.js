@@ -25,11 +25,11 @@ function SocketHandler() {
             _users.push(data.nickname);
             socket.emit('loginSuccess', { userCount: _users.length }); // emit current client
             if (!data.isReconnected) {
-                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients
+                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients except current client
                 console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
             }
             else {
-                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'relogin' }); // emit all clients
+                socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'relogin' }); // emit all clients except current client
                 _io.emit('loginAgain', { userCount: _users.length });
                 console.log(lh.tags.socket_handler + 'Event "relogin" called for user [' + socket.nickname + '] resigning in.');
             }
@@ -47,7 +47,7 @@ function SocketHandler() {
                 }
             }
             _users.splice(userIndex, 1);
-            _io.emit('system', { nickname: socket.nickname, userCount: _users.length, status: 'logout' }); // emit all clients except current client
+            _io.emit('system', { nickname: socket.nickname, userCount: _users.length, status: 'logout' }); // emit all clients
             console.log(lh.tags.socket_handler + 'Event "disconnect" called for user [' + socket.nickname + '] signing off.');
         }
     };

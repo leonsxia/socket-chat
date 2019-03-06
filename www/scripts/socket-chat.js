@@ -17,8 +17,7 @@ var SocketChat = function() {
     };
     this.USER_CONFIG = {
         nickname: null,
-        color: '#000',
-        message: ''
+        color: '#000'
     };
 };
 
@@ -40,10 +39,11 @@ SocketChat.prototype = {
         $('.sendBtn').on('click', function() {
             var $messageInput = $('.messageInput'),
                 msg = $messageInput.val();            
-            if (msg.trim().length > 0) {
+            if (msg.trim().length > 0 && that.FLAGS.connected) {
+                msg = msg.replace(/\s+$/g, '').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;');
                 $messageInput.val('');
                 that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color }); // emit 'postMsg' event to server
-                that._addChatMessage({nickname: 'me', message: msg, color: that.USER_CONFIG.color});
+                that._addChatMessage({nickname: 'me', message: msg, color: that.USER_CONFIG.color}, { isSelf: true});
             }
             $messageInput.focus();
         });
@@ -107,11 +107,11 @@ SocketChat.prototype = {
         $('.hideLog').on('click', function() {
             var $this = $(this);
             if ($this.attr('title') === 'hide log') {
-                $('.historyArea > p.log').fadeOut(that.FADE_TIME).addClass('hide');
+                $('.historyArea > li.log').fadeOut(that.FADE_TIME).addClass('hide');
                 $this.val('show log').attr('title', 'show log');
                 that.FLAGS.hideLog = true;
             } else {
-                $('.historyArea > p.log').fadeIn(that.FADE_TIME);
+                $('.historyArea > li.log').fadeIn(that.FADE_TIME);
                 $this.val('hide log').attr('title', 'hide log').removeClass('hide');
                 that.FLAGS.hideLog = false;
             }
@@ -142,20 +142,19 @@ SocketChat.prototype = {
                 } else if (e.keyCode === 13 && msg.trim().length > 0) {
                     msg = msg.replace(/\s+$/g, '').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;');
                     $this.val('');
-                    that.USER_CONFIG.message = '';
                     that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color });
                     that._addChatMessage({ nickname: 'me', message: msg, color: that.USER_CONFIG.color }, { isSelf: true});
                     that.socket.emit('stopTyping');
                     that.FLAGS.typing = false;
                 } else {
                     $this.focus();
-                    that.USER_CONFIG.message = msg;
                 }
             }            
         }).on('keydown', function(e) {
-            var $this = $(this);
-            if (e.keyCode === 13) {                
-                $this.val(that.USER_CONFIG.message);
+            var $this = $(this),
+                msg = $this.val().replace(/\n+$/g, '');
+            if (e.keyCode === 13) {
+                $this.val(msg);
                 $this.focus();
             } else if (e.keyCode < 112 || e.keyCode > 123) {    // except F1-F12
                 that._updateTyping();
@@ -204,7 +203,7 @@ SocketChat.prototype = {
         });
 
         this.socket.on('system', function(data) {
-            if (data.nickname !== null) {
+            if (data.nickname !== null && that.FLAGS.connected === true) {
                 var msg = data.nickname + (data.status.indexOf('login') > -1 ? 
                 (data.status === 'login' ? ' joined' : ' rejoined') : ' left');                         
                 that._updateBanner(data);
@@ -213,19 +212,27 @@ SocketChat.prototype = {
         });
 
         this.socket.on('newMsg', function(data) {
-            that._addChatMessage(data);
+            if (that.FLAGS.connected === true) {
+                that._addChatMessage(data);
+            }            
         });
 
         this.socket.on('newImg', function(data) {
-            that._addImg(data);
+            if (that.FLAGS.connected === true) {
+                that._addImg(data);
+            }            
         });
 
         this.socket.on('typing', function(data) {
-            that._addChatTyping(data);
+            if (that.FLAGS.connected === true) {
+                that._addChatTyping(data);
+            }            
         });
 
         this.socket.on('stopTyping', function(data) {
-            that._removeChatTyping(data);
+            if (that.FLAGS.connected === true) {
+                that._removeChatTyping(data);
+            }            
         });
     },
 
@@ -268,7 +275,7 @@ SocketChat.prototype = {
             typingClass = data.typing ? 'typing' : 'message';
         data.message = data.typing ? data.message : this._addEmoji(data.message);   // if not typing, show emoji
         $msgToDisplay.append('<div>' + 
-            (options.isSelf ? '<b class="right">[' + data.nickname + ']</b> ' : '<b class="left">[' + data.nickname + ']</b> ') + 
+            (options.isSelf ? '<b class="right">' : '<b class="left">') + '[' + data.nickname + ']</b> ' + 
             (data.typing ? '' : (options.isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>') + 
             (data.typing ? data.message : (options.isSelf ? '<p class="msgBox right">' : '<p class="msgBox left">') + data.message + '</p></div>'))        
         .data('nickname', data.nickname)
@@ -280,13 +287,16 @@ SocketChat.prototype = {
 
     _addImg: function(data) {
         var date = new Date().toTimeString().substr(0, 8),
-            $msgToDisplay = $('<li/>');
+            isSelf = data.nickname === this.USER_CONFIG.nickname ? true : false,
+            $msgToDisplay = isSelf ? $('<li class="rightbox image"/>'): $('<li class="leftbox image"/>');
         if (data.nickname === this.USER_CONFIG.nickname) {
             data.nickname = 'me';
         }
-        $msgToDisplay.addClass('img')
-        .append('<b>[' + data.nickname + ']</b> ' + '<span class="timespan">(' + date + '): </span> </br>' + 
-        '<a href="/show?src=' + data.src + '" target="_blank"><img src="' + data.src + '"/></a>')
+        $msgToDisplay.append('<div>' + 
+            (isSelf ? '<b class="right">' : '<b class="left">') + '[' + data.nickname + ']</b> ' + 
+            (isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>' + 
+            (isSelf ? '<a class="right"' :'<a class="left"') + ' href="/show?src=' + data.src + '" target="_blank">' + 
+            (isSelf ? '<img class="right img"' : '<img class="left img"') + ' src="' + data.src + '"/></a>')
         .find('b').css('color', data.color);
         this._addMessageElement($msgToDisplay);
     },

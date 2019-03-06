@@ -79,8 +79,10 @@ html, body, input, textarea {
     list-style: none;
 }
 
-.historyArea img {
+.historyArea .img {
     max-width: 50%;
+    position: relative;
+    top: 15px;
 }
 
 .historyArea li {
@@ -88,7 +90,7 @@ html, body, input, textarea {
     padding: 0 5px;
     margin: 4px 0;
     line-height: 25px;    
-    word-break: break-all;
+    word-break: break-all;    
 }
 
 .historyArea .log {
@@ -103,12 +105,28 @@ html, body, input, textarea {
     display: none;
 }
 
+.historyArea li span {
+    font-size: 13px;    
+}
+
 .historyArea li.leftbox {
     float: left;
+    margin-bottom: 27px;
+}
+
+.historyArea li.leftbox .left {
+    float: left;
+}
+
+.historyArea li.leftbox span.left {
+    padding: 1px 0 0 5px;
 }
 
 .historyArea li.leftbox p.left {
     background-color: #fff;
+    position: relative;
+    top: 25px;
+    left: -122px;
 }
 
 .historyArea li.rightbox {
@@ -121,7 +139,6 @@ html, body, input, textarea {
 }
 
 .historyArea li.rightbox span.right {
-    font-size: 13px;
     padding: 1px 5px 0 0;
 }
 
