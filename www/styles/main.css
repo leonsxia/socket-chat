@@ -138,9 +138,13 @@ html, body, input, textarea {
     background-color: #fff;
 }
 
-.historyArea li.leftbox a {
+.historyArea li.leftbox a.left {
     min-width: 90%;
     display: inline-block;
+}
+
+.historyArea li.leftbox img.left {
+    margin-left: 40px;
 }
 
 .historyArea li.rightbox {
@@ -163,6 +167,14 @@ html, body, input, textarea {
     max-width: 60%;
 }
 
+.historyArea li.rightbox a.right {
+    min-width: 90%;
+}
+
+.historyArea li.rightbox img.right {
+    margin-right: 40px;
+}
+
 .msgBox {
     margin: 13px 0px 6px 40px;
     padding: 3px 13px;
@@ -174,6 +186,10 @@ html, body, input, textarea {
     word-wrap: break-word;
     background-color: rgba(128, 255, 128, 0.7);
     border-radius: 4px;
+}
+
+.msgBox img {
+    margin: 5px 4px -3px 6px;
 }
 
 .timespan {
