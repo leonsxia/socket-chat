@@ -86,7 +86,7 @@ html, body, input, textarea {
 }
 
 .historyArea li {
-    width: 90%;
+    min-width: 90%;
     padding: 0 5px;
     margin: 4px 0;
     line-height: 25px;    
@@ -115,7 +115,7 @@ html, body, input, textarea {
 }
 
 .historyArea li.message {
-    margin-bottom: 13px;
+    margin-bottom: 27px;
 }
 
 .historyArea li.image {
@@ -123,17 +123,24 @@ html, body, input, textarea {
 }
 
 .historyArea li.leftbox .left {
-    float: left;
+    /* float: left; */
 }
 
 .historyArea li.leftbox span.left {
-    padding: 1px 0 0 5px;
+    /* padding: 1px 0 0 5px; */
 }
 
-.historyArea li.leftbox p.left {
+.historyArea li.leftbox div.left {
+    /* position: relative;    
+    top: 27px;
+    left: -122px; */
+    max-width: 60%;   
     background-color: #fff;
-    top: 25px;
-    max-width: 60%;
+}
+
+.historyArea li.leftbox a {
+    min-width: 90%;
+    display: inline-block;
 }
 
 .historyArea li.rightbox {
@@ -149,7 +156,7 @@ html, body, input, textarea {
     padding: 1px 5px 0 0;
 }
 
-.historyArea li.rightbox p.right {
+.historyArea li.rightbox div.right {
     position: relative;
     top: 25px;    
     right: -56px;
@@ -175,6 +182,8 @@ html, body, input, textarea {
 
 .items {
     height: 30px;
+    padding-top: 3px;
+    border-top: solid 1px #ddd;    
 }
 
 .items .btn {
@@ -272,8 +281,9 @@ html, body, input, textarea {
 }
 
 .historyArea::-webkit-scrollbar-track { /*rail*/
-    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    /* -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
     box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
     border-radius: 0px;
-    background: #EDEDED;
+    background: #EDEDED; */
+    display: none;
 }

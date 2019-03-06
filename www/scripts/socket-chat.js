@@ -29,7 +29,8 @@ SocketChat.prototype = {
         this.socket.on('connect', function() {
             $('.info').text('Get yourself a nickname :)');
             $('.nickWrapper').show();
-            $('.nicknameInput').focus();            
+            $('.nicknameInput').focus();
+            $('.messageInput').val('');
         });
 
         $('.loginWrapper').on('click', function() {
@@ -153,15 +154,15 @@ SocketChat.prototype = {
         }).on('keydown', function(e) {
             var $this = $(this),
                 msg = $this.val().replace(/\n+$/g, '');
-            if (e.keyCode === 13) {
-                $this.val(msg);
+            if (e.keyCode === 13) {                
                 $this.focus();
+                $this.val(msg);
             } else if (e.keyCode < 112 || e.keyCode > 123) {    // except F1-F12
                 that._updateTyping();
             }            
         }).on('keypress', function(e) {
             var $this = $(this),
-                msg = $this.val();
+                msg = $this.val().replace(/\n+$/g, '');;
             if (e.ctrlKey && e.which === 10) {
                 $this.val(msg + '\n');
                 that.FLAGS.comboKeyPressed = true;
@@ -277,7 +278,7 @@ SocketChat.prototype = {
         $msgToDisplay.append('<div>' + 
             (options.isSelf ? '<b class="right">' : '<b class="left">') + '[' + data.nickname + ']</b> ' + 
             (data.typing ? '' : (options.isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>') + 
-            (data.typing ? data.message : (options.isSelf ? '<p class="msgBox right">' : '<p class="msgBox left">') + data.message + '</p></div>'))        
+            (data.typing ? data.message : (options.isSelf ? '<div class="msgBox right">' : '<div class="msgBox left">') + data.message + '</div></div>'))        
         .data('nickname', data.nickname)
         .addClass(typingClass)
         .find('b').css({'color': data.color || '#000'});
@@ -303,7 +304,7 @@ SocketChat.prototype = {
 
     _addChatTyping: function(data) {
         data.typing = true;
-        data.message = 'is typing';
+        data.message = 'is typing...';
         this._addChatMessage(data);
     },
 
