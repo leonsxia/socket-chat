@@ -2,7 +2,6 @@ var logHelper = require('./logHelper'),
     lh = new logHelper(),
     socketHandlers = require('./socketHandlers');
 
-// inherits from SocketHandlers
 function SocketController() {
     var _father = new socketHandlers();
     return {
@@ -21,10 +20,6 @@ function SocketController() {
             });
         }
     };
-};
-
-SocketController.prototype = {
-    
 };
 
 module.exports = SocketController;

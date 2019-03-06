@@ -12,10 +12,11 @@ html, body, input, textarea {
 
 .wrapper {
     width: 500px;
-    height: 640px;
+    height: 670px;
     padding: 5px;
     margin: 0 auto;
     background-color: #ddd;
+    height: 670px;
 }
 
 .loginWrapper {
@@ -75,20 +76,24 @@ html, body, input, textarea {
     overflow: auto;
     padding: 2px;
     word-break: break-all;
+    list-style: none;
 }
 
 .historyArea img {
     max-width: 50%;
 }
 
-.historyArea p {
-    width: 93%;
+.historyArea li {
+    width: 90%;
     padding: 0 5px;
+    margin: 4px 0;
     line-height: 25px;    
     word-break: break-all;
 }
 
 .historyArea .log {
+    width: 97%;
+    float: left;
     color: #888;
     text-align: center;
     font-size: 11px;
@@ -96,6 +101,43 @@ html, body, input, textarea {
 
 .historyArea .log.hide {
     display: none;
+}
+
+.historyArea li.leftbox {
+    float: left;
+}
+
+.historyArea li.rightbox {
+    float: right;
+    margin-bottom: 27px;
+}
+
+.historyArea li.rightbox .right {
+    float: right;    
+}
+
+.historyArea li.rightbox span.right {
+    font-size: 13px;
+    padding: 1px 5px 0 0;
+}
+
+.historyArea li.rightbox p.right {
+    position: relative;
+    top: 25px;    
+    right: -56px;
+}
+
+.msgBox {
+    margin: 13px 0px 6px 40px;
+    padding: 3px 13px;
+    max-width: 70%;
+    min-width: 5%;
+    width: fit-content;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    word-wrap: break-word;
+    background-color: rgba(128, 255, 128, 0.7);
+    border-radius: 4px;
 }
 
 .timespan {

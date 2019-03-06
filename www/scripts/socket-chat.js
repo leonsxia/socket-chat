@@ -12,11 +12,13 @@ var SocketChat = function() {
         typing: false,
         connected: false,
         firstLogin: true,
-        hideLog: false
+        hideLog: false,
+        comboKeyPressed: false
     };
     this.USER_CONFIG = {
         nickname: null,
-        color: '#000'
+        color: '#000',
+        message: ''
     };
 };
 
@@ -37,12 +39,13 @@ SocketChat.prototype = {
 
         $('.sendBtn').on('click', function() {
             var $messageInput = $('.messageInput'),
-                msg = $messageInput.val();
-            $messageInput.val('').focus();
+                msg = $messageInput.val();            
             if (msg.trim().length > 0) {
+                $messageInput.val('');
                 that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color }); // emit 'postMsg' event to server
                 that._addChatMessage({nickname: 'me', message: msg, color: that.USER_CONFIG.color});
             }
+            $messageInput.focus();
         });
 
         $('.sendImg').on('change', function() {
@@ -132,32 +135,44 @@ SocketChat.prototype = {
         $('.messageInput').on('keyup', function(e) {
             var $this = $(this),
                 msg = $this.val();
-             // Auto-focus the current input when a key is typed
-            if (e.altKey) {
-                $this.val(msg + '<br/>' );
-            } else if (e.keyCode == 13 && msg.trim().length > 0 && that.FLAGS.connected) {
-                $this.val('');
-                that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color });
-                that._addChatMessage({ nickname: 'me', message: msg, color: that.USER_CONFIG.color });
-                that.socket.emit('stopTyping');
-                that.FLAGS.typing = false;
-            } else {
-                this.focus();
-            }
-        });
 
-        $('.messageInput').on('input', function(e) {
-            // var $messageInput = $('.messageInput'),
-            //     msg = $messageInput.val();
-            // if (e.keyCode == 13 && msg.trim().length > 0) {
-            //     return;
-            // }
-            that._updateTyping();
+            if (that.FLAGS.connected) {
+                if (that.FLAGS.comboKeyPressed) {
+                    that.FLAGS.comboKeyPressed = false;
+                } else if (e.keyCode === 13 && msg.trim().length > 0) {
+                    msg = msg.replace(/\s+$/g, '').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;');
+                    $this.val('');
+                    that.USER_CONFIG.message = '';
+                    that.socket.emit('postMsg', { message: msg, color: that.USER_CONFIG.color });
+                    that._addChatMessage({ nickname: 'me', message: msg, color: that.USER_CONFIG.color }, { isSelf: true});
+                    that.socket.emit('stopTyping');
+                    that.FLAGS.typing = false;
+                } else {
+                    $this.focus();
+                    that.USER_CONFIG.message = msg;
+                }
+            }            
+        }).on('keydown', function(e) {
+            var $this = $(this);
+            if (e.keyCode === 13) {                
+                $this.val(that.USER_CONFIG.message);
+                $this.focus();
+            } else if (e.keyCode < 112 || e.keyCode > 123) {    // except F1-F12
+                that._updateTyping();
+            }            
+        }).on('keypress', function(e) {
+            var $this = $(this),
+                msg = $this.val();
+            if (e.ctrlKey && e.which === 10) {
+                $this.val(msg + '\n');
+                that.FLAGS.comboKeyPressed = true;
+            } 
         });
 
         this.socket.on('disconnect', function() {
             that.FLAGS.connected = false;
             that._log({ nickname: 'system', message: 'you have been disconnected', color: '#888' });
+            that.socket.emit('stopTyping');
         });
         
         this.socket.on('reconnect', function() {
@@ -231,7 +246,7 @@ SocketChat.prototype = {
 
     _log: function(data) {
         var date = new Date().toTimeString().substr(0, 8),
-            $msgToDisplay = $('<p/>').addClass('log')
+            $msgToDisplay = $('<li/>').addClass('log')
             .append('-[' + data.nickname + '] ' + '<span class="timespan">(' + date + '): </span>' + data.message + '-')
             .css('color', data.color);
             if (this.FLAGS.hideLog) {
@@ -248,26 +263,24 @@ SocketChat.prototype = {
             $typingMessages.remove();
         }
 
-        var $msgToDisplay = $('<p class="message"/>'),
+        var $msgToDisplay = options.isSelf ? $('<li class="rightbox"/>'): $('<li class="leftbox"/>'),
             date = new Date().toTimeString().substr(0, 8),
-            typingClass = data.typing ? 'typing' : '';
+            typingClass = data.typing ? 'typing' : 'message';
         data.message = data.typing ? data.message : this._addEmoji(data.message);   // if not typing, show emoji
-        $msgToDisplay.append('<b>[' + data.nickname + ']</b> ' + (data.typing ? '' : '<span class="timespan">(' + date + '): </span>') + data.message)        
+        $msgToDisplay.append('<div>' + 
+            (options.isSelf ? '<b class="right">[' + data.nickname + ']</b> ' : '<b class="left">[' + data.nickname + ']</b> ') + 
+            (data.typing ? '' : (options.isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>') + 
+            (data.typing ? data.message : (options.isSelf ? '<p class="msgBox right">' : '<p class="msgBox left">') + data.message + '</p></div>'))        
         .data('nickname', data.nickname)
-        .addClass(typingClass);
-
-        if (data.typing) {
-            $msgToDisplay.find('b').css({'color': data.color || '#000'});
-        } else {
-            $msgToDisplay.css({'color': data.color || '#000'});
-        }
+        .addClass(typingClass)
+        .find('b').css({'color': data.color || '#000'});
 
         this._addMessageElement($msgToDisplay, options);
     },
 
     _addImg: function(data) {
         var date = new Date().toTimeString().substr(0, 8),
-            $msgToDisplay = $('<p/>');
+            $msgToDisplay = $('<li/>');
         if (data.nickname === this.USER_CONFIG.nickname) {
             data.nickname = 'me';
         }
@@ -291,7 +304,7 @@ SocketChat.prototype = {
     },
 
     _getTypingMessages: function(data) {
-        return $('.typing.message').filter(function (i) {
+        return $('.typing').filter(function (i) {
             return $(this).data('nickname') === data.nickname;
         });
     },
