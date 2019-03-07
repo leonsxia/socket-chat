@@ -48,6 +48,7 @@ function SocketHandler() {
             }
             _users.splice(userIndex, 1);
             _io.emit('system', { nickname: socket.nickname, userCount: _users.length, status: 'logout' }); // emit all clients
+            _io.emit('stopTyping', { nickname: socket.nickname });
             console.log(lh.tags.socket_handler + 'Event "disconnect" called for user [' + socket.nickname + '] signing off.');
         }
     };

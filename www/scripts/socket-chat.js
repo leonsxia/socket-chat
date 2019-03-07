@@ -172,7 +172,6 @@ SocketChat.prototype = {
         this.socket.on('disconnect', function() {
             that.FLAGS.connected = false;
             that._log({ nickname: 'system', message: 'you have been disconnected', color: '#888' });
-            that.socket.emit('stopTyping');
         });
         
         this.socket.on('reconnect', function() {
@@ -208,6 +207,7 @@ SocketChat.prototype = {
                 var msg = data.nickname + (data.status.indexOf('login') > -1 ? 
                 (data.status === 'login' ? ' joined' : ' rejoined') : ' left');                         
                 that._updateBanner(data);
+                // that._removeChatTyping(data);
                 that._log({ nickname: 'system', message: msg, color: '#888' }) ;
             }            
         });
@@ -275,9 +275,9 @@ SocketChat.prototype = {
             date = new Date().toTimeString().substr(0, 8),
             typingClass = data.typing ? 'typing' : 'message';
         data.message = data.typing ? data.message : this._addEmoji(data.message);   // if not typing, show emoji
-        $msgToDisplay.append('<div>' + 
-            (options.isSelf ? '<b class="right">' : '<b class="left">') + '[' + data.nickname + ']</b> ' + 
-            (data.typing ? '' : (options.isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>') + 
+        $msgToDisplay.append('<div><div class=' + 
+            (options.isSelf ? '"righthead right"><b class="right">' : '"lefthead"><b class="left">') + '[' + data.nickname + ']</b> ' + 
+            (data.typing ? '' : (options.isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span></div>') + 
             (data.typing ? data.message : (options.isSelf ? '<div class="msgBox right">' : '<div class="msgBox left">') + data.message + '</div></div>'))        
         .data('nickname', data.nickname)
         .addClass(typingClass)
@@ -293,11 +293,11 @@ SocketChat.prototype = {
         if (data.nickname === this.USER_CONFIG.nickname) {
             data.nickname = 'me';
         }
-        $msgToDisplay.append('<div>' + 
-            (isSelf ? '<b class="right">' : '<b class="left">') + '[' + data.nickname + ']</b> ' + 
-            (isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span>' + 
-            (isSelf ? '<a class="right"' :'<a class="left"') + ' href="/show?src=' + data.src + '" target="_blank">' + 
-            (isSelf ? '<img class="right img"' : '<img class="left img"') + ' src="' + data.src + '"/></a>')
+        $msgToDisplay.append('<div><div class=' + 
+            (isSelf ? '"righthead right"><b class="right">' : '"lefthead"><b class="left">') + '[' + data.nickname + ']</b> ' + 
+            (isSelf ? '<span class="timespan right">(' : '<span class="timespan left">(') + date + ')</span></div>' + 
+            (isSelf ? '<div class="left img"><a class="right"' :'<div class="left img"><a class="left"') + ' href="/show?src=' + data.src + '" target="_blank">' + 
+            (isSelf ? '<img class="right"' : '<img class="left"') + ' src="' + data.src + '"/></a></div>')
         .find('b').css('color', data.color);
         this._addMessageElement($msgToDisplay);
     },

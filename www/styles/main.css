@@ -79,13 +79,13 @@ html, body, input, textarea {
 }
 
 .historyArea .img {
-    max-width: 50%;
+    max-width: 90%;
     position: relative;
     top: 15px;
 }
 
 .historyArea li {
-    min-width: 90%;
+    width: 90%;
     padding: 0 5px;
     margin: 4px 0;
     line-height: 25px;    
@@ -129,20 +129,22 @@ html, body, input, textarea {
     /* padding: 1px 0 0 5px; */
 }
 
-.historyArea li.leftbox div.left {
+.historyArea li.leftbox div.msgBox.left {
     /* position: relative;    
     top: 27px;
     left: -122px; */
+    display: inline-block;
     max-width: 60%;   
     background-color: #fff;
 }
 
 .historyArea li.leftbox a.left {
-    min-width: 90%;
-    display: inline-block;
+    /* min-width: 90%;
+    display: inline-block; */
 }
 
 .historyArea li.leftbox img.left {
+    width: 50%;
     margin-left: 40px;
 }
 
@@ -155,11 +157,11 @@ html, body, input, textarea {
     float: right;    
 }
 
-.historyArea li.rightbox span.right {
+.historyArea li.rightbox span.timespan {
     padding: 1px 5px 0 0;
 }
 
-.historyArea li.rightbox div.right {
+.historyArea li.rightbox div.msgBox.right {
     position: relative;
     top: 25px;    
     right: -56px;
@@ -167,11 +169,11 @@ html, body, input, textarea {
 }
 
 .historyArea li.rightbox a.right {
-    min-width: 90%;
+    /* min-width: 90%; */
 }
 
 .historyArea li.rightbox img.right {
-    margin-right: 40px;
+   width: 50%;
 }
 
 .msgBox {
