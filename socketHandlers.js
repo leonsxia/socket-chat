@@ -27,8 +27,7 @@ function SocketHandler() {
             if (!data.isReconnected) {
                 socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'login' }); // emit all clients except current client
                 console.log(lh.tags.socket_handler + 'Event "login" called for user [' + socket.nickname + '] signing in.');
-            }
-            else {
+            } else {
                 socket.broadcast.emit('system', { nickname: data.nickname, userCount: _users.length, status: 'relogin' }); // emit all clients except current client
                 _io.emit('loginAgain', { userCount: _users.length });
                 console.log(lh.tags.socket_handler + 'Event "relogin" called for user [' + socket.nickname + '] resigning in.');
