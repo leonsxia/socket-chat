@@ -92,10 +92,10 @@ function SocketHandler() {
     } 
 
     // public function
-    return {
-        init: this.init,
-        socketHandlers: this.socketHandlers   
-    };    
+    // return {
+    //     init: this.init,
+    //     socketHandlers: this.socketHandlers   
+    // };    
 };
 
 module.exports = SocketHandler;
