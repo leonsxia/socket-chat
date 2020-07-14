@@ -4,8 +4,8 @@ var logHelper = require('./logHelper'),
 
 function SocketController() {
     // var _father = new socketHandlers();
-    socketHandlers.call(this);
-    var _father = this;
+    socketHandlers.call(this); // add socketHandlers properties to SocketController
+    var _father = this; // _father refers to this SocketController
     return {
         init: function(io, users) {            
             _father.init(io, users);
