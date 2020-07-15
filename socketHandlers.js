@@ -3,9 +3,11 @@ var fs = require('fs'),
     lh = new logHelper();
 
 function SocketHandler() {
+    // private properties
     var _self = this;
     var _users = null;
     var _io = null;
+    // private properties
 
     this.init = function(io, users) { 
         _users = users;
